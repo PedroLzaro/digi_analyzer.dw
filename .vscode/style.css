@@ -1,0 +1,26 @@
+.caixa {
+    height: 220px;
+    width: 200px;
+    border: 2px solid gray;
+    border-radius: 10px;
+    box-shadow: 10px 4px 10px rgba(0, 0, 0, 0.3); 
+    display:flexbox;
+    flex-direction: column; 
+    cursor: pointer;
+    transition: all 0.5s ease;
+}
+
+.caixa:hover {
+    transform: scale(1.1);
+}
+
+.texto {
+    top: 10px;
+}
+
+.img {
+    height: 120px;
+    width: 200px;
+    border-radius: 20px;
+
+}
