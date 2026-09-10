@@ -1,11 +1,64 @@
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    background-color: #f0f0f0;
+}
+
+.header {
+    height: 60px;
+    width: 100%;
+    background-color: #333;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+}
+
+.busca {
+    height: 40px;
+    width: 100%;
+    background-color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+}
+
+.shortcuts {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.busca .search {
+    height: 30px;
+    width: 400px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    pointer-events:visible;
+}
+
 .caixa {
-    height: 220px;
-    width: 200px;
+    height: 320px;
+    width: 250px;
+    background-color: #f9f9f9;
     border: 2px solid gray;
     border-radius: 10px;
     box-shadow: 10px 4px 10px rgba(0, 0, 0, 0.3); 
-    display:flexbox;
-    flex-direction: column; 
+    display: flexbox;
+    position: relative;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
     transition: all 0.5s ease;
 }
@@ -19,9 +72,18 @@
 }
 
 .img {
-    height: 120px;
-    width: 200px;
-    border-radius: 20px;
+    height: 150px;
+    width: 250px;
+    position: absolute;
+    justify-content:flex-start;
 
+}
+
+.descricao {
+    position: absolute;
+    bottom: 110px;
+    left: 60px;
+    font-size: 20px;
+    color: #333;
 }
 
