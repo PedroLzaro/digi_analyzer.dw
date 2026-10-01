@@ -79,7 +79,18 @@ main {
 .card {
     border: 2px solid #333;
     background-color: white;
+    animation-fill-mode: both;
+    margin: 30px;
+    transform: scale(1.25);
+    cursor: pointer;
+    transition: transform 0.3s ease;
 }
+
+.card:hover {
+    transform: scale(1.35);
+}
+
+
 
 .card img {
     width: 100%;
