@@ -1,0 +1,160 @@
+.pagina-detalhe {
+    min-height: 100vh;
+    background-color: #e8eef3;
+}
+
+.pagina-detalhe .detalhe {
+    box-sizing: border-box;
+    display: block;
+    width: min(100% - 40px, 1000px);
+    margin: 32px auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+
+.voltar {
+    display: inline-block;
+    margin-bottom: 18px;
+    color: #174e7c;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.voltar:hover {
+    text-decoration: underline;
+}
+
+.perfil-digimon {
+    display: grid;
+    grid-template-columns: minmax(240px, 0.85fr) minmax(0, 1.15fr);
+    overflow: hidden;
+    border: 2px solid #263746;
+    background: #fff;
+}
+
+.perfil-imagem {
+    display: grid;
+    min-height: 390px;
+    place-items: center;
+    padding: 28px;
+    background: #d9e8ee;
+}
+
+.perfil-imagem img {
+    display: block;
+    width: 100%;
+    max-width: 340px;
+    aspect-ratio: 1;
+    object-fit: contain;
+}
+
+.perfil-conteudo {
+    padding: 34px clamp(22px, 5vw, 56px);
+}
+
+.identificador {
+    margin: 0 0 8px;
+    color: #2563a6;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.perfil-conteudo h2 {
+    margin: 0;
+    color: #172b3a;
+    font-size: 36px;
+}
+
+.resumo {
+    margin: 12px 0 30px;
+    color: #4b5563;
+    line-height: 1.6;
+}
+
+.informacoes h3,
+.descricao h2 {
+    margin: 0 0 14px;
+    color: #172b3a;
+    font-size: 20px;
+}
+
+.informacoes dl {
+    margin: 0;
+}
+
+.informacoes dl div {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 12px;
+    padding: 12px 0;
+    border-top: 1px solid #d7e0e7;
+}
+
+.informacoes dt {
+    color: #4b5563;
+    font-weight: 700;
+}
+
+.informacoes dd {
+    margin: 0;
+    color: #66727d;
+}
+
+.descricao {
+    margin-top: 22px;
+    padding: 24px 28px;
+    border-left: 5px solid #2563a6;
+    background: #fff;
+}
+
+.descricao p {
+    margin: 0;
+    color: #4b5563;
+    line-height: 1.7;
+}
+
+@media (max-width: 640px) {
+    .pagina-detalhe header {
+        padding: 0 16px;
+    }
+
+    .pagina-detalhe header h1 {
+        font-size: 22px;
+    }
+
+    .pagina-detalhe .logo {
+        width: 90px;
+        height: 42px;
+    }
+
+    .pagina-detalhe .detalhe {
+        width: min(100% - 24px, 1000px);
+        margin: 20px auto;
+    }
+
+    .perfil-digimon {
+        grid-template-columns: 1fr;
+    }
+
+    .perfil-imagem {
+        min-height: 260px;
+        padding: 18px;
+    }
+
+    .perfil-imagem img {
+        max-width: 260px;
+    }
+
+    .perfil-conteudo {
+        padding: 24px 20px;
+    }
+
+    .perfil-conteudo h2 {
+        font-size: 30px;
+    }
+
+    .descricao {
+        padding: 20px;
+    }
+}
