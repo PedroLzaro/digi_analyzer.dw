@@ -1,3 +1,4 @@
+/* Base da página de detalhe */
 .pagina-detalhe {
     min-height: 100vh;
     background-color: #e8eef3;
@@ -13,6 +14,7 @@
     background: transparent;
 }
 
+/* Botão de voltar */
 .voltar {
     display: inline-block;
     margin-bottom: 18px;
@@ -25,6 +27,7 @@
     text-decoration: underline;
 }
 
+/* Navegação entre Digimons */
 .navegacao-digimon {
     display: flex;
     justify-content: space-between;
@@ -51,6 +54,7 @@
     cursor: not-allowed;
 }
 
+/* Card do Digimon */
 .perfil-digimon {
     display: grid;
     grid-template-columns: minmax(240px, 0.85fr) minmax(0, 1.15fr);
@@ -132,6 +136,7 @@
     color: #66727d;
 }
 
+/* Descrição final */
 .descricao {
     margin-top: 22px;
     padding: 24px 28px;
@@ -145,7 +150,8 @@
     line-height: 1.7;
 }
 
-@media (max-width: 640px) {
+/* Responsividade para telas menores */
+@media (max-width: 700px) {
     .pagina-detalhe header {
         padding: 0 16px;
     }
@@ -162,6 +168,14 @@
     .pagina-detalhe .detalhe {
         width: min(100% - 24px, 1000px);
         margin: 20px auto;
+    }
+
+    .navegacao-digimon {
+        flex-direction: column;
+    }
+
+    .navegacao-digimon button {
+        width: 100%;
     }
 
     .perfil-digimon {

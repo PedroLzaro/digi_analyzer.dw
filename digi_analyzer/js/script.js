@@ -1,3 +1,4 @@
+// Dados principais dos Digimons
 const digimons = [
 	{
 		id: "001",
@@ -165,6 +166,7 @@ const digimons = [
 	}
 ];
 
+// Elementos da página de detalhe
 const imagemDigimon = document.querySelector("#imagem-digimon");
 const identificadorDigimon = document.querySelector("#identificador-digimon");
 const nomeDigimon = document.querySelector("#nome-digimon");
@@ -177,6 +179,7 @@ const descricaoDigimon = document.querySelector("#descricao-digimon");
 const botaoAnterior = document.querySelector("#digimon-anterior");
 const botaoProximo = document.querySelector("#digimon-proximo");
 
+// Define o Digimon atual pela URL
 let idAtual = parseInt(window.location.search.substring(4));
 
 if (isNaN(idAtual) || idAtual < 1 || idAtual > digimons.length) {
@@ -184,6 +187,7 @@ if (isNaN(idAtual) || idAtual < 1 || idAtual > digimons.length) {
 }
 
 if (imagemDigimon && botaoAnterior && botaoProximo) {
+	// Mostra o Digimon selecionado na tela
 	function mostrarDigimon() {
 		let digimon = digimons[idAtual - 1];
 
@@ -215,12 +219,14 @@ if (imagemDigimon && botaoAnterior && botaoProximo) {
 		botaoProximo.disabled = idAtual === digimons.length;
 	}
 
+	// Navegação para o Digimon anterior
 	botaoAnterior.addEventListener("click", function () {
 		if (idAtual > 1) {
 			window.location.href = "digicard.html?id=" + digimons[idAtual - 2].id;
 		}
 	});
 
+	// Navegação para o próximo Digimon
 	botaoProximo.addEventListener("click", function () {
 		if (idAtual < digimons.length) {
 			window.location.href = "digicard.html?id=" + digimons[idAtual].id;
