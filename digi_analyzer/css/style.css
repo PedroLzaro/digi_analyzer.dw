@@ -40,12 +40,34 @@ header h1 {
 
 /* Busca */
 .pesquisa {
-    width: min(350px, 90%);
-    height: 45px;
+    width: min(420px, 90%);
     margin: 20px 0 20px 5%;
-    background-color: #d1d5db;
+}
+
+.pesquisa input {
+    width: 100%;
+    height: 48px;
+    padding: 0 16px;
     border: 2px solid #9ca3af;
-    border-radius: 5px;
+    border-radius: 10px;
+    font-size: 16px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.pesquisa input:focus {
+    border-color: #2563a6;
+    box-shadow: 0 0 0 3px rgba(37, 99, 166, 0.15);
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    border: 0;
 }
 
 /* Grid de cards */
@@ -72,9 +94,25 @@ main {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.card.hidden {
+    display: none;
+}
+
 .card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.empty-state {
+    grid-column: 1 / -1;
+    display: none;
+    text-align: center;
+    padding: 28px 16px;
+    border: 2px dashed #94a3b8;
+    border-radius: 10px;
+    color: #475569;
+    background: #f8fafc;
+    font-size: 18px;
 }
 
 .card img {

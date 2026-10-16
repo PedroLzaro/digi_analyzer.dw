@@ -1,3 +1,35 @@
+const campoBusca = document.querySelector("#buscar-digimon");
+const cardsDigimon = document.querySelectorAll(".card");
+const listaDigimons = document.querySelector(".lista-digimons");
+
+if (campoBusca && cardsDigimon.length > 0) {
+	const mensagemSemResultado = document.createElement("p");
+	mensagemSemResultado.className = "empty-state";
+	mensagemSemResultado.textContent = "Nenhum Digimon encontrado.";
+	listaDigimons.appendChild(mensagemSemResultado);
+
+	function filtrarDigimons() {
+		const termoBusca = campoBusca.value.trim().toLowerCase();
+		let encontrouResultado = false;
+
+		cardsDigimon.forEach((card) => {
+			const nomeDigimon = card.querySelector("h2")?.textContent.toLowerCase() || "";
+			const idDigimon = card.querySelector("p")?.textContent.toLowerCase() || "";
+			const corresponde = !termoBusca || nomeDigimon.includes(termoBusca) || idDigimon.includes(termoBusca);
+
+			card.classList.toggle("hidden", !corresponde);
+			if (corresponde) {
+				encontrouResultado = true;
+			}
+		});
+
+		mensagemSemResultado.style.display = encontrouResultado ? "none" : "block";
+	}
+
+	campoBusca.addEventListener("input", filtrarDigimons);
+	filtrarDigimons();
+}
+
 // Dados principais dos Digimons
 const digimons = [
 	{
