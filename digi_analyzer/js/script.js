@@ -14,7 +14,6 @@ let timerBusca = null;
  */
 async function buscarDigimonsDaAPI(termo = "") {
     try {
-        // Mostra estado de carregamento
         mensagemStatus.style.display = "block";
         mensagemStatus.textContent = "Carregando...";
 
@@ -22,50 +21,58 @@ async function buscarDigimonsDaAPI(termo = "") {
         const buscaEhNumero = /^\d+$/.test(termoLimpo);
         const idDigitado = buscaEhNumero ? Number.parseInt(termoLimpo, 10) : null;
 
-        // Define a URL da API (busca todos se estiver vazio, por nome ou por ID exato)
-        const url = !termoLimpo
+        const urlBase = !termoLimpo
             ? "https://digi-api.com/api/v1/digimon"
             : buscaEhNumero
                 ? `https://digi-api.com/api/v1/digimon/${idDigitado}`
                 : `https://digi-api.com/api/v1/digimon?name=${encodeURIComponent(termoLimpo)}`;
 
-        const resposta = await fetch(url);
-
-        if (!resposta.ok) {
-            if (resposta.status === 404) {
-                mensagemStatus.style.display = "block";
-                mensagemStatus.textContent = "Nenhum Digimon encontrado.";
-                return;
-            }
-            throw new Error("Erro na requisição da API");
-        }
-
-        const dados = await resposta.json();
-        const resultados = Array.isArray(dados.content)
-            ? dados.content
-            : dados && dados.id
-                ? [dados]
-                : [];
-
-        // Limpa apenas os cards anteriores
         const cardsAntigos = listaDigimons.querySelectorAll(".card");
         cardsAntigos.forEach(card => card.remove());
+
+        const resultados = [];
+        let pagina = 0;
+        let temProximaPagina = true;
+
+        while (temProximaPagina) {
+            const url = buscaEhNumero
+                ? urlBase
+                : `${urlBase}${urlBase.includes("?") ? "&" : "?"}page=${pagina}&pageSize=1000`;
+            const resposta = await fetch(url);
+
+            if (!resposta.ok) {
+                if (resposta.status === 404) {
+                    mensagemStatus.textContent = "Nenhum Digimon encontrado.";
+                    return;
+                }
+                throw new Error("Erro na requisição da API");
+            }
+
+            const dados = await resposta.json();
+            if (Array.isArray(dados.content)) {
+                resultados.push(...dados.content);
+                temProximaPagina = Boolean(dados.pageable?.nextPage);
+                pagina += 1;
+            } else {
+                if (dados && dados.id) {
+                    resultados.push(dados);
+                }
+                temProximaPagina = false;
+            }
+        }
 
         if (resultados.length === 0) {
             mensagemStatus.textContent = "Nenhum Digimon encontrado.";
             return;
         }
 
-        // Esconde a mensagem de aviso se houver resultados
         mensagemStatus.style.display = "none";
 
-        // Renderiza cada Digimon recebido da API
         resultados.forEach(digimon => {
             const card = document.createElement("a");
             card.className = "card";
             card.href = `./digicard.html?id=${digimon.id}`;
 
-            // Formatando o ID com zeros à esquerda (ex: ID: 001)
             const idFormatado = String(digimon.id).padStart(3, "0");
 
             card.innerHTML = `
