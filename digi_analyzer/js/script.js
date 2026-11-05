@@ -7,12 +7,22 @@ mensagemStatus.className = "empty-state";
 listaDigimons.appendChild(mensagemStatus);
 
 let timerBusca = null;
+let controllerBusca = null;
+let requisicaoAtual = 0;
 
 /**
  * Busca Digimons na API com base no nome digitado.
  * @param {string} termo - Nome ou trecho para pesquisa.
  */
 async function buscarDigimonsDaAPI(termo = "") {
+    if (controllerBusca) {
+        controllerBusca.abort();
+    }
+
+    const controller = new AbortController();
+    controllerBusca = controller;
+    const idRequisicao = ++requisicaoAtual;
+
     try {
         mensagemStatus.style.display = "block";
         mensagemStatus.textContent = "Carregando...";
@@ -38,7 +48,11 @@ async function buscarDigimonsDaAPI(termo = "") {
             const url = buscaEhNumero
                 ? urlBase
                 : `${urlBase}${urlBase.includes("?") ? "&" : "?"}page=${pagina}&pageSize=1000`;
-            const resposta = await fetch(url);
+            const resposta = await fetch(url, { signal: controller.signal });
+
+            if (idRequisicao !== requisicaoAtual) {
+                return;
+            }
 
             if (!resposta.ok) {
                 if (resposta.status === 404) {
@@ -49,6 +63,10 @@ async function buscarDigimonsDaAPI(termo = "") {
             }
 
             const dados = await resposta.json();
+            if (idRequisicao !== requisicaoAtual) {
+                return;
+            }
+
             if (Array.isArray(dados.content)) {
                 resultados.push(...dados.content);
                 temProximaPagina = Boolean(dados.pageable?.nextPage);
@@ -84,6 +102,10 @@ async function buscarDigimonsDaAPI(termo = "") {
         });
 
     } catch (erro) {
+        if (controller.signal.aborted || idRequisicao !== requisicaoAtual) {
+            return;
+        }
+
         console.error("Erro ao carregar Digimons:", erro);
         mensagemStatus.style.display = "block";
         mensagemStatus.textContent = "Erro ao carregar dados da API.";
