@@ -157,6 +157,14 @@ let timerBusca = null;
 let controllerBusca = null;
 let requisicaoAtual = 0;
 
+function obterImagemDigimon(digimon) {
+    if (!digimon) {
+        return "";
+    }
+
+    return digimon.images?.[0]?.href || digimon.image || "";
+}
+
 /**
  * Busca Digimons na API com base no nome digitado.
  * @param {string} termo - Nome ou trecho para pesquisa.
@@ -243,8 +251,10 @@ async function buscarDigimonsDaAPI(termo = "") {
             card.href = `./digicard.html?id=${digimon.id}`;
 
             const idFormatado = String(digimon.id).padStart(3, "0");
+            const imagemDigimonCard = obterImagemDigimon(digimon);
 
             card.innerHTML = `
+                <img src="${imagemDigimonCard}" alt="${digimon.name}" loading="lazy">
                 <h2>${digimon.name}</h2>
                 <p>ID: ${idFormatado}</p>
             `;
