@@ -167,3 +167,25 @@ main {
         font-size: 16px;
     }
 }
+
+
+.ordenacao {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+
+.ordenacao button {
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background-color: #2563a6;
+    color: white;
+    cursor: pointer;
+}
+
+
+.ordenacao button:hover {
+    background-color: #174b80;
+}
