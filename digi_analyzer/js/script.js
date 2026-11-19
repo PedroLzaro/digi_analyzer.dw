@@ -1,6 +1,10 @@
 const campoBusca = document.querySelector("#buscar-digimon");
 const listaDigimons = document.querySelector(".lista-digimons");
 
+// NOVO: Pegando os dois botões de ordenação do seu HTML
+const botaoOrdenarNome = document.querySelector("#ordenar-nome");
+const botaoOrdenarId = document.querySelector("#ordenar-id");
+
 // Só cria a mensagem se estiver na página da lista
 let mensagemStatus = null;
 
@@ -157,6 +161,10 @@ let timerBusca = null;
 let controllerBusca = null;
 let requisicaoAtual = 0;
 
+// NOVO: Guarda na memória os Digimons carregados atualmente e qual ordem está ativa
+let digimonsAtuais = [];
+let criterioOrdenacao = "id"; // Pode ser "id" ou "nome"
+
 function obterImagemDigimon(digimon) {
     if (!digimon) {
         return "";
@@ -166,8 +174,59 @@ function obterImagemDigimon(digimon) {
 }
 
 /**
- * Busca Digimons na API com base no nome digitado.
- * @param {string} termo - Nome ou trecho para pesquisa.
+ * NOVO: Função separada só para ordenar e desenhar os cards na tela.
+ * Assim, tanto a busca da API quanto os botões de ordenar usam ela!
+ */
+function renderizarDigimons(lista) {
+    if (!listaDigimons) {
+        return;
+    }
+
+    // Mantém a sua lógica original: remove só os .card para preservar o mensagemStatus
+    const cardsAntigos = listaDigimons.querySelectorAll(".card");
+    cardsAntigos.forEach(card => card.remove());
+
+    if (lista.length === 0) {
+        if (mensagemStatus) {
+            mensagemStatus.style.display = "block";
+            mensagemStatus.textContent = "Nenhum Digimon encontrado.";
+        }
+        return;
+    }
+
+    if (mensagemStatus) {
+        mensagemStatus.style.display = "none";
+    }
+
+    // Cria uma cópia da lista e ordena conforme o botão escolhido
+    const listaOrdenada = [...lista].sort((a, b) => {
+        if (criterioOrdenacao === "nome") {
+            return a.name.localeCompare(b.name);
+        }
+        return a.id - b.id;
+    });
+
+    listaOrdenada.forEach(digimon => {
+        const card = document.createElement("a");
+        card.className = "card";
+        card.href = `./digicard.html?id=${digimon.id}`;
+
+        const idFormatado = String(digimon.id).padStart(3, "0");
+        const imagemDigimonCard = obterImagemDigimon(digimon);
+
+        card.innerHTML = `
+            <img src="${imagemDigimonCard}" alt="${digimon.name}" loading="lazy">
+            <h2>${digimon.name}</h2>
+            <p>ID: ${idFormatado}</p>
+        `;
+
+        listaDigimons.appendChild(card);
+    });
+}
+
+/**
+- Busca Digimons na API com base no nome digitado.
+- @param {string} termo - Nome ou trecho para pesquisa.
  */
 async function buscarDigimonsDaAPI(termo = "") {
     if (controllerBusca) {
@@ -213,6 +272,7 @@ async function buscarDigimonsDaAPI(termo = "") {
 
             if (!resposta.ok) {
                 if (resposta.status === 404) {
+                    digimonsAtuais = []; // Limpa a memória para não reaparecer lista antiga ao ordenar
                     if (mensagemStatus) {
                         mensagemStatus.textContent = "Nenhum Digimon encontrado.";
                     }
@@ -238,29 +298,9 @@ async function buscarDigimonsDaAPI(termo = "") {
             }
         }
 
-        if (resultados.length === 0) {
-            mensagemStatus.textContent = "Nenhum Digimon encontrado.";
-            return;
-        }
-
-        mensagemStatus.style.display = "none";
-
-        resultados.forEach(digimon => {
-            const card = document.createElement("a");
-            card.className = "card";
-            card.href = `./digicard.html?id=${digimon.id}`;
-
-            const idFormatado = String(digimon.id).padStart(3, "0");
-            const imagemDigimonCard = obterImagemDigimon(digimon);
-
-            card.innerHTML = `
-                <img src="${imagemDigimonCard}" alt="${digimon.name}" loading="lazy">
-                <h2>${digimon.name}</h2>
-                <p>ID: ${idFormatado}</p>
-            `;
-
-            listaDigimons.appendChild(card);
-        });
+        // Salva os resultados na memória e chama a função que desenha na tela
+        digimonsAtuais = resultados;
+        renderizarDigimons(digimonsAtuais);
 
     } catch (erro) {
         if (controller.signal.aborted || idRequisicao !== requisicaoAtual) {
@@ -271,6 +311,21 @@ async function buscarDigimonsDaAPI(termo = "") {
         mensagemStatus.style.display = "block";
         mensagemStatus.textContent = "Erro ao carregar dados da API.";
     }
+}
+
+// NOVO: Eventos de clique nos botões de ordenação (com if para não dar erro na página digicard.html)
+if (botaoOrdenarNome) {
+    botaoOrdenarNome.addEventListener("click", () => {
+        criterioOrdenacao = "nome";
+        renderizarDigimons(digimonsAtuais);
+    });
+}
+
+if (botaoOrdenarId) {
+    botaoOrdenarId.addEventListener("click", () => {
+        criterioOrdenacao = "id";
+        renderizarDigimons(digimonsAtuais);
+    });
 }
 
 // Ouve a digitação no campo de busca utilizando Debounce (evita requisições excessivas)
