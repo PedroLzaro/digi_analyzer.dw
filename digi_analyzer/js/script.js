@@ -1,3 +1,5 @@
+
+
 const campoBusca = document.querySelector("#buscar-digimon");
 const listaDigimons = document.querySelector(".lista-digimons");
 
@@ -165,6 +167,19 @@ let requisicaoAtual = 0;
 let digimonsAtuais = [];
 let criterioOrdenacao = "id"; // Pode ser "id" ou "nome"
 
+// Configuração da paginação
+let paginaAtual = 1;
+const digimonsPorPagina = 60;
+
+const botaoPaginaAnterior =
+    document.querySelector("#pagina-anterior");
+
+const botaoPaginaProxima =
+    document.querySelector("#pagina-proxima");
+
+const numeroPagina =
+    document.querySelector("#numero-pagina");
+
 function obterImagemDigimon(digimon) {
     if (!digimon) {
         return "";
@@ -177,20 +192,53 @@ function obterImagemDigimon(digimon) {
  * NOVO: Função separada só para ordenar e desenhar os cards na tela.
  * Assim, tanto a busca da API quanto os botões de ordenar usam ela!
  */
+
 function renderizarDigimons(lista) {
     if (!listaDigimons) {
         return;
     }
 
-    // Mantém a sua lógica original: remove só os .card para preservar o mensagemStatus
+    // Remove os cards antigos
     const cardsAntigos = listaDigimons.querySelectorAll(".card");
     cardsAntigos.forEach(card => card.remove());
 
+    // Ordena os Digimons
+    const listaOrdenada = [...lista].sort((a, b) => {
+        if (criterioOrdenacao === "nome") {
+            return a.name.localeCompare(b.name);
+        }
+
+        return a.id - b.id;
+    });
+
+    // Calcula a quantidade de páginas
+    const totalPaginas = Math.ceil(
+        listaOrdenada.length / digimonsPorPagina
+    );
+
+    // Impede que a página atual ultrapasse o limite
+    paginaAtual = Math.max(1, Math.min(
+        paginaAtual,
+        totalPaginas || 1
+    ));
+
+    // Calcula quais Digimons serão exibidos
+    const inicio = (paginaAtual - 1) * digimonsPorPagina;
+    const fim = inicio + digimonsPorPagina;
+
+    const digimonsExibidos = listaOrdenada.slice(inicio, fim);
+
+    // Mensagem quando não encontrar Digimons
     if (lista.length === 0) {
         if (mensagemStatus) {
             mensagemStatus.style.display = "block";
             mensagemStatus.textContent = "Nenhum Digimon encontrado.";
         }
+
+        if (document.querySelector(".paginacao")) {
+            document.querySelector(".paginacao").style.display = "none";
+        }
+
         return;
     }
 
@@ -198,15 +246,8 @@ function renderizarDigimons(lista) {
         mensagemStatus.style.display = "none";
     }
 
-    // Cria uma cópia da lista e ordena conforme o botão escolhido
-    const listaOrdenada = [...lista].sort((a, b) => {
-        if (criterioOrdenacao === "nome") {
-            return a.name.localeCompare(b.name);
-        }
-        return a.id - b.id;
-    });
-
-    listaOrdenada.forEach(digimon => {
+    // Cria os cards somente dos Digimons da página atual
+    digimonsExibidos.forEach(digimon => {
         const card = document.createElement("a");
         card.className = "card";
         card.href = `./digicard.html?id=${digimon.id}`;
@@ -222,13 +263,31 @@ function renderizarDigimons(lista) {
 
         listaDigimons.appendChild(card);
     });
-}
 
+    // Atualiza os controles da paginação
+    const paginacao = document.querySelector(".paginacao");
+
+    if (paginacao) {
+        paginacao.style.display = "flex";
+
+        numeroPagina.textContent =
+            `Página ${paginaAtual} de ${totalPaginas}`;
+
+        botaoPaginaAnterior.disabled = paginaAtual === 1;
+
+        botaoPaginaProxima.disabled =
+            paginaAtual === totalPaginas;
+    }
+}
 /**
 - Busca Digimons na API com base no nome digitado.
 - @param {string} termo - Nome ou trecho para pesquisa.
  */
 async function buscarDigimonsDaAPI(termo = "") {
+    if (!listaDigimons) {
+        return;
+    }
+
     if (controllerBusca) {
         controllerBusca.abort();
     }
@@ -298,9 +357,12 @@ async function buscarDigimonsDaAPI(termo = "") {
             }
         }
 
-        // Salva os resultados na memória e chama a função que desenha na tela
-        digimonsAtuais = resultados;
-        renderizarDigimons(digimonsAtuais);
+       digimonsAtuais = resultados;
+
+// Sempre começa pela primeira página após uma pesquisa
+paginaAtual = 1;
+
+renderizarDigimons(digimonsAtuais);
 
     } catch (erro) {
         if (controller.signal.aborted || idRequisicao !== requisicaoAtual) {
@@ -340,6 +402,32 @@ if (campoBusca) {
 }
 
 // Carrega os Digimons iniciais assim que a página abre
-document.addEventListener("DOMContentLoaded", () => {
-    buscarDigimonsDaAPI();
-});
+if (listaDigimons) {
+    document.addEventListener("DOMContentLoaded", () => {
+        buscarDigimonsDaAPI();
+    });
+}
+
+// Botão para voltar uma página
+if (botaoPaginaAnterior) {
+    botaoPaginaAnterior.addEventListener("click", () => {
+        if (paginaAtual > 1) {
+            paginaAtual--;
+            renderizarDigimons(digimonsAtuais);
+        }
+    });
+}
+
+// Botão para avançar uma página
+if (botaoPaginaProxima) {
+    botaoPaginaProxima.addEventListener("click", () => {
+        const totalPaginas = Math.ceil(
+            digimonsAtuais.length / digimonsPorPagina
+        );
+
+        if (paginaAtual < totalPaginas) {
+            paginaAtual++;
+            renderizarDigimons(digimonsAtuais);
+        }
+    });
+}

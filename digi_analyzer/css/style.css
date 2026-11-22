@@ -189,3 +189,37 @@ main {
 .ordenacao button:hover {
     background-color: #174b80;
 }
+
+
+/* Paginação */
+.paginacao {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin: 30px auto;
+}
+
+.paginacao button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #2563a6;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.paginacao button:hover:not(:disabled) {
+    background-color: #174b80;
+}
+
+.paginacao button:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+}
+
+#numero-pagina {
+    font-size: 16px;
+    font-weight: bold;
+}
